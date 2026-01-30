@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Drawing;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,6 +13,7 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
@@ -22,6 +25,7 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        updateBestText();
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -72,5 +76,19 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        if(m_Points > PlayerData.Instance.PlayerScore)
+        {
+            PlayerData.Instance.SaveNewData(m_Points);
+            updateBestText();
+        }
+    }
+
+    private void updateBestText()
+    {
+        PlayerData.Instance.LoadData();
+        Debug.Log("Name existance: " + (PlayerData.Instance.PlayerName != null));
+        Debug.Log("score existance: " + (PlayerData.Instance.PlayerScore != 0));
+        Debug.Log("BestText Existance " + (PlayerData.Instance.PlayerScore != 0));
+        BestText.text = "Best Score : " + PlayerData.Instance.PlayerName + " : " + PlayerData.Instance.PlayerScore;
     }
 }
